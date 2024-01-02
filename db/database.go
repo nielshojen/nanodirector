@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/mdmdirector/mdmdirector/utils"
+	"github.com/nielshojen/nanodirector/utils"
 	"github.com/pkg/errors"
 
 	// Need to import mysql

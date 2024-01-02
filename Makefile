@@ -37,7 +37,7 @@ clean:
 
 build: clean .pre-build
 	echo "Building..."
-	go build -o build/$(CURRENT_PLATFORM)/mdmdirector
+	go build -o build/$(CURRENT_PLATFORM)/nanodirector
 
 xp-build:  clean .pre-build
 	GOOS=darwin GOARCH=amd64 go build -o build/darwin/mdmdirector-darwin-amd64

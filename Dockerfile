@@ -1,6 +1,6 @@
 FROM golang:latest as builder
 
-WORKDIR /go/src/github.com/mdmdirector/mdmdirector/
+WORKDIR /go/src/github.com/nielshojen/nanodirector/
 
 ENV CGO_ENABLED=0 \
     GOARCH=amd64 \
@@ -16,7 +16,7 @@ FROM alpine:latest
 
 RUN apk --update add ca-certificates
 
-COPY --from=builder /go/src/github.com/mdmdirector/mdmdirector/build/linux/mdmdirector /usr/bin/mdmdirector
+COPY --from=builder /go/src/github.com/nielshojen/nanodirector/build/linux/nanodirector /usr/bin/nanodirector
 
 EXPOSE 8000
 CMD ["/usr/bin/mdmdirector"]

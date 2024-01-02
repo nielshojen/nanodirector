@@ -11,9 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mdmdirector/mdmdirector/db"
-	"github.com/mdmdirector/mdmdirector/types"
-	"github.com/mdmdirector/mdmdirector/utils"
+	"github.com/nielshojen/nanodirector/db"
+	"github.com/nielshojen/nanodirector/types"
+	"github.com/nielshojen/nanodirector/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/vmihailenco/taskq/v3"

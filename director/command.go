@@ -4,18 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	intErrors "errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"path"
 	"time"
 
-	"github.com/go-xmlfmt/xmlfmt"
 	"github.com/google/uuid"
 	"github.com/groob/plist"
-	"github.com/mdmdirector/mdmdirector/db"
-	"github.com/mdmdirector/mdmdirector/types"
-	"github.com/mdmdirector/mdmdirector/utils"
+	"github.com/nielshojen/nanodirector/db"
+	"github.com/nielshojen/nanodirector/types"
+	"github.com/nielshojen/nanodirector/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
@@ -46,9 +44,6 @@ func SendCommand(payload types.Payload) (types.Payload, error) {
 	if err != nil {
 		return payload, err
 	}
-
-	x := xmlfmt.FormatXML(string(plistStr), "\t", "  ")
-	fmt.Printf("Sent Payload: %+v", string(x))
 
 	req, _ := http.NewRequest("POST", utils.NanoURL()+"/v1/enqueue/"+device.UDID, bytes.NewBuffer(plistStr))
 
@@ -82,8 +77,6 @@ func SendCommand(payload types.Payload) (types.Payload, error) {
 			CommandUUID:        command.CommandUUID,
 		},
 	)
-
-	// fmt.Printf("Putting Command in the DB: %+v\n", command)
 
 	db.DB.Create(&command)
 	if utils.Prometheus() {

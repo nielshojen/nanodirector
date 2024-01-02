@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/mdmdirector/mdmdirector/db"
+	"github.com/nielshojen/nanodirector/db"
 	"github.com/pkg/errors"
 
 	"gorm.io/driver/postgres"

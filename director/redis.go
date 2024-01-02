@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/mdmdirector/mdmdirector/utils"
+	"github.com/nielshojen/nanodirector/utils"
 )
 
 func RedisClient() *redis.Client {

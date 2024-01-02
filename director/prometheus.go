@@ -3,8 +3,8 @@ package director
 import (
 	"time"
 
-	"github.com/mdmdirector/mdmdirector/db"
-	"github.com/mdmdirector/mdmdirector/types"
+	"github.com/nielshojen/nanodirector/db"
+	"github.com/nielshojen/nanodirector/types"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

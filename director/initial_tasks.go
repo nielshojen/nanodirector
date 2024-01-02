@@ -3,8 +3,8 @@ package director
 import (
 	"time"
 
-	"github.com/mdmdirector/mdmdirector/db"
-	"github.com/mdmdirector/mdmdirector/types"
+	"github.com/nielshojen/nanodirector/db"
+	"github.com/nielshojen/nanodirector/types"
 	"github.com/pkg/errors"
 )
 
@@ -35,11 +35,6 @@ func RunInitialTasks(udid string) error {
 	// 		return err
 	// 	}
 	// 	return nil
-	// }
-
-	// _, err = AccountConfiguration(device)
-	// if err != nil {
-	// 	return errors.Wrap(err, "RunInitialTasks:AccountConfiguration")
 	// }
 
 	_, err = InstallAllProfiles(device)

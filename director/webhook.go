@@ -9,9 +9,9 @@ import (
 
 	"github.com/groob/plist"
 	"github.com/hashicorp/go-version"
-	"github.com/mdmdirector/mdmdirector/db"
-	"github.com/mdmdirector/mdmdirector/types"
-	"github.com/mdmdirector/mdmdirector/utils"
+	"github.com/nielshojen/nanodirector/db"
+	"github.com/nielshojen/nanodirector/types"
+	"github.com/nielshojen/nanodirector/utils"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -45,8 +45,6 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		ErrorLogger(LogHolder{Message: err.Error()})
 	}
-
-	fmt.Println(out.Topic)
 
 	var device types.Device
 

@@ -3,7 +3,7 @@ package types
 import (
 	"time"
 
-	"github.com/mdmdirector/mdmdirector/db"
+	"github.com/nielshojen/nanodirector/db"
 	"github.com/pkg/errors"
 )
 

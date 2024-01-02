@@ -16,9 +16,9 @@ import (
 func RequestCertificateList(device types.Device) error {
 	requestType := "CertificateList"
 	DebugLogger(LogHolder{Message: "Requesting Certificate List", DeviceUDID: device.UDID, DeviceSerial: device.SerialNumber, CommandRequestType: requestType})
-	var payload types.CommandPayload
+	var payload types.Payload
 	payload.UDID = device.UDID
-	payload.RequestType = requestType
+	payload.CommandPayload.Command.RequestType = requestType
 	_, err := SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "RequestCertificateList: SendCommand")

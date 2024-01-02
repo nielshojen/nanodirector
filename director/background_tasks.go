@@ -1,9 +1,6 @@
 package director
 
 import (
-	"bytes"
-	"encoding/json"
-	"io"
 	"net/http"
 	"net/url"
 	"path"
@@ -14,7 +11,6 @@ import (
 	"github.com/mdmdirector/mdmdirector/types"
 	"github.com/mdmdirector/mdmdirector/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 )
 
 const MAX = 5
@@ -72,7 +68,7 @@ func pushNotNow() error {
 	client := &http.Client{}
 	for i := range commands {
 		queuedCommand := commands[i]
-		endpoint, err := url.Parse(utils.ServerURL())
+		endpoint, err := url.Parse(utils.NanoURL())
 		if err != nil {
 			ErrorLogger(LogHolder{Message: err.Error()})
 		}
@@ -86,7 +82,7 @@ func pushNotNow() error {
 		if err != nil {
 			ErrorLogger(LogHolder{Message: err.Error()})
 		}
-		req.SetBasicAuth("micromdm", utils.APIKey())
+		req.SetBasicAuth("micromdm", utils.NanoAPIKey())
 
 		resp, err := client.Do(req)
 		if err != nil {
@@ -149,67 +145,67 @@ func processUnconfiguredDevices() error {
 	return nil
 }
 
-func FetchDevicesFromMDM() {
-	var deviceModel types.Device
-	var devices types.DevicesFromMDM
-	log.Info("Fetching devices from MicroMDM...")
+// func FetchDevicesFromMDM() {
+// 	var deviceModel types.Device
+// 	var devices types.DevicesFromMDM
+// 	log.Info("Fetching devices from NAnoMDM...")
 
-	// Handle Micro having a bad day
-	var client = &http.Client{
-		Timeout: time.Second * 60,
-	}
+// 	// Handle Micro having a bad day
+// 	var client = &http.Client{
+// 		Timeout: time.Second * 60,
+// 	}
 
-	endpoint, err := url.Parse(utils.ServerURL())
-	if err != nil {
-		ErrorLogger(LogHolder{Message: err.Error()})
-	}
-	endpoint.Path = path.Join(endpoint.Path, "v1", "devices")
+// 	endpoint, err := url.Parse(utils.NanoURL())
+// 	if err != nil {
+// 		ErrorLogger(LogHolder{Message: err.Error()})
+// 	}
+// 	endpoint.Path = path.Join(endpoint.Path, "v1", "devices")
 
-	req, _ := http.NewRequest("POST", endpoint.String(), bytes.NewBufferString("{}"))
-	req.SetBasicAuth("micromdm", utils.APIKey())
-	resp, err := client.Do(req)
-	if err != nil {
-		ErrorLogger(LogHolder{Message: err.Error()})
-	}
+// 	req, _ := http.NewRequest("POST", endpoint.String(), bytes.NewBufferString("{}"))
+// 	req.SetBasicAuth("micromdm", utils.APIKey())
+// 	resp, err := client.Do(req)
+// 	if err != nil {
+// 		ErrorLogger(LogHolder{Message: err.Error()})
+// 	}
 
-	if resp.StatusCode != 200 {
-		return
-	}
+// 	if resp.StatusCode != 200 {
+// 		return
+// 	}
 
-	defer resp.Body.Close()
+// 	defer resp.Body.Close()
 
-	responseData, err := io.ReadAll(resp.Body)
-	if err != nil {
-		ErrorLogger(LogHolder{Message: err.Error()})
-	}
+// 	responseData, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		ErrorLogger(LogHolder{Message: err.Error()})
+// 	}
 
-	err = json.Unmarshal(responseData, &devices)
-	if err != nil {
-		ErrorLogger(LogHolder{Message: err.Error()})
-	}
+// 	err = json.Unmarshal(responseData, &devices)
+// 	if err != nil {
+// 		ErrorLogger(LogHolder{Message: err.Error()})
+// 	}
 
-	for _, newDevice := range devices.Devices {
-		var device types.Device
-		device.UDID = newDevice.UDID
-		device.SerialNumber = newDevice.SerialNumber
-		device.Active = newDevice.EnrollmentStatus
-		if newDevice.EnrollmentStatus {
-			device.AuthenticateRecieved = true
-			device.TokenUpdateRecieved = true
-			device.InitialTasksRun = true
-		}
-		if newDevice.UDID == "" {
-			continue
-		}
-		err := db.DB.Model(&deviceModel).
-			Where("ud_id = ?", newDevice.UDID).
-			FirstOrCreate(&device).
-			Error
-		if err != nil {
-			ErrorLogger(LogHolder{Message: err.Error()})
-		}
+// 	for _, newDevice := range devices.Devices {
+// 		var device types.Device
+// 		device.UDID = newDevice.UDID
+// 		device.SerialNumber = newDevice.SerialNumber
+// 		device.Active = newDevice.EnrollmentStatus
+// 		if newDevice.EnrollmentStatus {
+// 			device.AuthenticateRecieved = true
+// 			device.TokenUpdateRecieved = true
+// 			device.InitialTasksRun = true
+// 		}
+// 		if newDevice.UDID == "" {
+// 			continue
+// 		}
+// 		err := db.DB.Model(&deviceModel).
+// 			Where("ud_id = ?", newDevice.UDID).
+// 			FirstOrCreate(&device).
+// 			Error
+// 		if err != nil {
+// 			ErrorLogger(LogHolder{Message: err.Error()})
+// 		}
 
-	}
-	DevicesFetchedFromMDM = true
-	log.Info("Finished fetching devices from MicroMDM...")
-}
+// 	}
+// 	DevicesFetchedFromMDM = true
+// 	log.Info("Finished fetching devices from MicroMDM...")
+// }

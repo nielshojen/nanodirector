@@ -4,15 +4,16 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 // Certificate represents a certificate.
 type Certificate struct {
-	ID         uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID         string `gorm:"primaryKey;type:char(36)"`
 	CommonName string
 	Subject    string
-	NotAfter   time.Time
-	NotBefore  time.Time
+	NotAfter   time.Time `gorm:"type:DATETIME;default:NULL"`
+	NotBefore  time.Time `gorm:"type:DATETIME;default:NULL"`
 	Data       []byte
 	Issuer     string
 	DeviceUDID string
@@ -28,4 +29,9 @@ type CertificateList struct {
 	CommonName string `plist:"CommonName"`
 	Data       []byte `plist:"Data"`
 	IsIdentity bool   `plist:"IsIdentity"`
+}
+
+func (certificate *Certificate) BeforeCreate(scope *gorm.DB) error {
+	certificate.ID = uuid.NewString()
+	return nil
 }

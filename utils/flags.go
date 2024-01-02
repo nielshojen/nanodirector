@@ -6,12 +6,12 @@ import (
 	"strings"
 )
 
-func ServerURL() string {
-	return strings.TrimRight(flag.Lookup("micromdmurl").Value.(flag.Getter).Get().(string), "/")
+func NanoURL() string {
+	return strings.TrimRight(flag.Lookup("nanomdmurl").Value.(flag.Getter).Get().(string), "/")
 }
 
-func APIKey() string {
-	return flag.Lookup("micromdmapikey").Value.(flag.Getter).Get().(string)
+func NanoAPIKey() string {
+	return flag.Lookup("nanomdmapikey").Value.(flag.Getter).Get().(string)
 }
 
 func DebugMode() bool {
@@ -134,6 +134,14 @@ func OnceIn() int {
 
 func InfoRequestInterval() int {
 	return flag.Lookup("info-request-interval").Value.(flag.Getter).Get().(int)
+}
+
+func AdminUserUsername() string {
+	return flag.Lookup("admin-user-username").Value.(flag.Getter).Get().(string)
+}
+
+func AdminUserPassword() string {
+	return flag.Lookup("admin-user-password").Value.(flag.Getter).Get().(string)
 }
 
 // Code for testing goes down here

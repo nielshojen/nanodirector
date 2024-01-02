@@ -1,39 +1,41 @@
-# MDMDirector
+# nanoDirector
 
-MDMDirector is an opinionated orchestrator for [MicroMDM](https://github.com/micromdm/micromdm). It enables profiles to be managed with MicroMDM in a stateful manner, via a RESTful API. It also allows for installation of packages either just at enrollment or immediately. It receives webhook events from MicroMDM and then instructs MicroMDM to perform appropriate actions. As such, MDMDirector does not need to be exposed to the public internet.
+nanoDirector is a rewrite of the amazing [MDMDirector](https://github.com/mamdirector/mdmdirector). I had to do a Proof of Concept for work, and wanted a component that could talk to [NanoMDM](https://github.com/NanoMDM/nanomdm) directly. I also wanted to use MySQL as a backend so we could keep all the nano components on the same DB, and had a need for some AccountCreatino functionality.
+
+NOTE that this is my forst time working with go, so this is probably riddled with bad code and poor choices. Use at your peril!
 
 ## Usage
 
-MDMDirector is a compiled binary and is configured using flags.
+nanoDirector is a compiled binary and is configured using flags.
 
 Requirements:
 
 * Redis for the scheduled checkin queue
-* PostgreSQL database for storing device information
+* MySQL database for storing device information
 * (Recommended) Signing certificate for signing profiles
-* (STRONGLY recommended) Load balancer/proxy to serve and terminate TLS for MDMDirector
+* (STRONGLY recommended) Load balancer/proxy to serve and terminate TLS for nanoDirector
 
 
-### MicroMDM Setup
+### NanoMDM Setup
 
-You must set the `-command-webhook-url` flag on MicroMDM to the URL of your MDMDirector instance (with the addition of `/webhook`).
+You must set the `-command-webhook-url` flag on NanoMDM to the URL of your nanoDirector instance (with the addition of `/webhook`).
 
 ```
--command-webhook-url=https://mdmdirector.company.com/webhook
+-command-webhook-url=https://nanodirector.company.com/webhook
 ```
 
 ### Flags
 
 - `-cert /path/to/certificate` - Path to the signing certificate or p12 file.
 - `-clear-device-on-enroll` - Deletes device profiles and install applications when a device enrolls (default "false")
-- `-db-host string` - **(Required)** Hostname or IP of the PostgreSQL instance
+- `-db-host string` - **(Required)** Hostname or IP of the MySQL instance
 - `-db-max-idle-connections int` - Maximum number of database connections in the idle connection pool (default -1, not set, uses the default for sql Go package)
 - `-db-max-connections int` - Maximum number of database connections (default 100)
 - `-db-name string` - **(Required)** Name of the database to connect to.
 - `-db-password string` - **(Required)** Password of the DB user.
-- `-db-port string` - The port of the PostgreSQL instance (default 5432)
-- `-db-sslmode` - The SSL Mode to use to connect to PostgreSQL (default "disable")
-- `-db-username string` - **(Required)** Username used to connect to the PostgreSQL instance.
+- `-db-port string` - The port of the MySQL instance (default 5432)
+- `-db-sslmode` - The SSL Mode to use to connect to MySQL (default "false")
+- `-db-username string` - **(Required)** Username used to connect to the MySQL instance.
 - `-redis-host string` - Hostname of your Redis instance (default "localhost").
 - `-redis-port string` - Port of your Redis instance (default 6379).
 - `-redis-password string` - Password for your Redis instance (default is no password).
@@ -45,28 +47,33 @@ You must set the `-command-webhook-url` flag on MicroMDM to the URL of your MDMD
 - `-key-password string` - Password to decrypt the signing key or p12 file.
 - `-loglevel string` - Log level. One of debug, info, warn, error (default "warn")
 - `-logformat-format` - Log format. Either `logfmt` (the default) or `json`.
-- `-micromdmapikey string` - **(Required)** MicroMDM Server API Key.
-- `-micromdmurl string` - **(Required)** MicroMDM Server URL.
+- `-nanomdmapikey string` - **(Required)** NanoMDM Server API Key.
+- `-nanomdmurl string` - **(Required)** NanoMDM Server URL.
 - `-once-in` - Number of minutes to wait before queuing an additional command for any device which already has commands queued. Defaults to 60. Ignored and overridden as 2 (minutes) if --debug is passed.
 - `-password string` - **(Required)** Password used for basic authentication
-- `-port string` - Port number to run MDMDirector on. (default "8000")
+- `-port string` - Port number to run nanoDirector on. (default "8000")
 - `-prometheus` - Enable Prometheus metrics. (default false)
 - `-push-new-build` - Re-push profiles if the device's build number changes. (default true)
-- `-scep-cert-issuer` - The issuer of your SCEP certificate (default: "CN=MicroMDM,OU=MICROMDM SCEP CA,O=MicroMDM,C=US")
+- `-scep-cert-issuer` - The issuer of your SCEP certificate (default: "CN=NanoMDM,OU=NanoMDM SCEP CA,O=NanoMDM,C=US")
 - `-scep-cert-min-validity` - The number of days at which the SCEP certificate has remaining before the enrollment profile is re-sent. (default: 180)
-- `-sign` - Sign profiles prior to sending to MicroMDM. Requires `-cert` to be passed.
+- `-sign` - Sign profiles prior to sending to NanoMDM. Requires `-cert` to be passed.
 - `-signing-private-key string` - Path to the signing private key. Don't use with p12 file.
+- `-admin-user-username string` - Username for the admin user creted at enrollment (default "administrator").
+- `-admin-user-password string` - Password for the admin user creted at enrollmen (default "password").
 
 
 ## Todo
 
+- Dynamically setting admin password and escrow to baackend (eg. Crypt)
+- MySQL SSL mode
+
 ### Documentation
 
-- Posting / removing profiles and apps
+- Changes made to this fork needs to be fixed in the docs
 
 ### App
 
-- App state inspection binary (perhaps a separate service to MDMDirector due to requiring exposure to the public internet)
+- Maybe a GUI
 
 ## Contributing
 

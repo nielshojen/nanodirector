@@ -249,7 +249,7 @@ func PostDeviceCommandHandler(w http.ResponseWriter, r *http.Request) {
 		if command == "device_lock" {
 			if pin != "" {
 				err := db.DB.Model(&deviceModel).
-					Select("lock", "unlock_pin").
+					Select("`lock`, `unlock_pin`").
 					Where("ud_id = ?", device.UDID).
 					Updates(map[string]interface{}{
 						"lock":       value,
@@ -445,10 +445,10 @@ func RequestDeviceInformation(device types.Device) error {
 			CommandRequestType: requestType,
 		},
 	)
-	var payload types.CommandPayload
+	var payload types.Payload
 	payload.UDID = device.UDID
-	payload.RequestType = requestType
-	payload.Queries = types.DeviceInformationQueries
+	payload.CommandPayload.Command.RequestType = requestType
+	payload.CommandPayload.Command.Queries = types.DeviceInformationQueries
 	_, err := SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "RequestDeviceInformation:SendCommand")

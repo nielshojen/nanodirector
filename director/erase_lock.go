@@ -55,10 +55,10 @@ func EraseLockDevice(udid string) error {
 		return errors.Wrap(err, "EraseLockDevice:escrowPin")
 	}
 	log.Infof("Sending %v to %v", requestType, device.UDID)
-	var payload types.CommandPayload
+	var payload types.Payload
 	payload.UDID = device.UDID
-	payload.RequestType = requestType
-	payload.Pin = pin
+	payload.CommandPayload.Command.RequestType = requestType
+	payload.CommandPayload.Command.Pin = pin
 	_, err = SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "EraseLockDevice:SendCommand")

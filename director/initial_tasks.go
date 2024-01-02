@@ -37,6 +37,11 @@ func RunInitialTasks(udid string) error {
 	// 	return nil
 	// }
 
+	// _, err = AccountConfiguration(device)
+	// if err != nil {
+	// 	return errors.Wrap(err, "RunInitialTasks:AccountConfiguration")
+	// }
+
 	_, err = InstallAllProfiles(device)
 	if err != nil {
 		return errors.Wrap(err, "RunInitialTasks:InstallAllProfiles")
@@ -74,15 +79,15 @@ func processDeviceConfigured(device types.Device) error {
 
 func SendDeviceConfigured(device types.Device) error {
 	requestType := "DeviceConfigured"
-	var commandPayload types.CommandPayload
-	commandPayload.UDID = device.UDID
-	commandPayload.RequestType = requestType
-	_, err := SendCommand(commandPayload)
+	var payload types.Payload
+	payload.UDID = device.UDID
+	payload.CommandPayload.Command.RequestType = requestType
+	_, err := SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "SendDeviceConfigured")
 	}
 	// Twice for luck
-	_, err = SendCommand(commandPayload)
+	_, err = SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "SendDeviceConfigured")
 	}

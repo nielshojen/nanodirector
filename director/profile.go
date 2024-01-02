@@ -611,8 +611,10 @@ func PushProfiles(devices []types.Device, profiles []types.DeviceProfile) ([]typ
 		device := devices[i]
 		for i := range profiles {
 			profileData := profiles[i]
-			var commandPayload types.CommandPayload
-			commandPayload.RequestType = "InstallProfile"
+			var command types.Command
+			var payload types.Payload
+			command.RequestType = "InstallProfile"
+			payload.CommandPayload.Command.RequestType = "InstallProfile"
 
 			InfoLogger(
 				LogHolder{
@@ -621,7 +623,7 @@ func PushProfiles(devices []types.Device, profiles []types.DeviceProfile) ([]typ
 					Message:            "Pushing Device Profile",
 					ProfileIdentifier:  profileData.PayloadIdentifier,
 					ProfileUUID:        profileData.HashedPayloadUUID,
-					CommandRequestType: commandPayload.RequestType,
+					CommandRequestType: command.RequestType,
 				},
 			)
 
@@ -639,14 +641,14 @@ func PushProfiles(devices []types.Device, profiles []types.DeviceProfile) ([]typ
 					log.Errorf("signing profile with the specified key: %v", err)
 				}
 
-				commandPayload.Payload = base64.StdEncoding.EncodeToString(signed)
+				payload.CommandPayload.Command.Payload = []byte(signed)
 			} else {
-				commandPayload.Payload = base64.StdEncoding.EncodeToString(profileData.MobileconfigData)
+				payload.CommandPayload.Command.Payload = []byte(profileData.MobileconfigData)
 			}
 
-			commandPayload.UDID = device.UDID
+			payload.UDID = device.UDID
 
-			command, err := SendCommand(commandPayload)
+			payload, err := SendCommand(payload)
 			if err != nil {
 				ErrorLogger(LogHolder{Message: err.Error()})
 			}
@@ -703,10 +705,13 @@ func DeleteSharedProfiles(
 		device := devices[i]
 		for i := range profiles {
 			profileData := profiles[i]
-			var commandPayload types.CommandPayload
-			commandPayload.UDID = device.UDID
-			commandPayload.RequestType = "RemoveProfile"
-			commandPayload.Identifier = profileData.PayloadIdentifier
+			var payload types.Payload
+			var command types.Command
+			payload.UDID = device.UDID
+			payload.CommandPayload.Command.RequestType = "RemoveProfile"
+			payload.CommandPayload.Command.Identifier = profileData.PayloadIdentifier
+			command.RequestType = "RemoveProfile"
+			command.Identifier = profileData.PayloadIdentifier
 			InfoLogger(
 				LogHolder{
 					DeviceUDID:         device.UDID,
@@ -714,10 +719,10 @@ func DeleteSharedProfiles(
 					Message:            "Deleting Shared Profile",
 					ProfileIdentifier:  profileData.PayloadIdentifier,
 					ProfileUUID:        profileData.HashedPayloadUUID,
-					CommandRequestType: commandPayload.RequestType,
+					CommandRequestType: command.RequestType,
 				},
 			)
-			command, err := SendCommand(commandPayload)
+			payload, err := SendCommand(payload)
 			if err != nil {
 				return pushedCommands, errors.Wrap(err, "DeleteSharedProfiles")
 			}
@@ -737,10 +742,13 @@ func DeleteDeviceProfiles(
 		device := devices[i]
 		for i := range profiles {
 			profileData := profiles[i]
-			var commandPayload types.CommandPayload
-			commandPayload.UDID = device.UDID
-			commandPayload.RequestType = "RemoveProfile"
-			commandPayload.Identifier = profileData.PayloadIdentifier
+			var payload types.Payload
+			var command types.Command
+			payload.UDID = device.UDID
+			payload.CommandPayload.Command.RequestType = "RemoveProfile"
+			payload.CommandPayload.Command.Identifier = profileData.PayloadIdentifier
+			command.RequestType = "RemoveProfile"
+			command.Identifier = profileData.PayloadIdentifier
 			InfoLogger(
 				LogHolder{
 					DeviceUDID:         device.UDID,
@@ -748,10 +756,10 @@ func DeleteDeviceProfiles(
 					Message:            "Deleting Device Profile",
 					ProfileIdentifier:  profileData.PayloadIdentifier,
 					ProfileUUID:        profileData.HashedPayloadUUID,
-					CommandRequestType: commandPayload.RequestType,
+					CommandRequestType: command.RequestType,
 				},
 			)
-			command, err := SendCommand(commandPayload)
+			payload, err := SendCommand(payload)
 			if err != nil {
 				return pushedCommands, errors.Wrap(err, "DeleteDeviceProfiles")
 			}
@@ -771,10 +779,12 @@ func PushSharedProfiles(
 		device := devices[i]
 		for i := range profiles {
 			profileData := profiles[i]
-			var commandPayload types.CommandPayload
+			var payload types.Payload
+			var command types.Command
 
-			commandPayload.UDID = device.UDID
-			commandPayload.RequestType = "InstallProfile"
+			payload.UDID = device.UDID
+			payload.CommandPayload.Command.RequestType = "InstallProfile"
+			command.RequestType = "InstallProfile"
 
 			InfoLogger(
 				LogHolder{
@@ -783,7 +793,7 @@ func PushSharedProfiles(
 					Message:            "Pushing Shared Profile",
 					ProfileIdentifier:  profileData.PayloadIdentifier,
 					ProfileUUID:        profileData.HashedPayloadUUID,
-					CommandRequestType: commandPayload.RequestType,
+					CommandRequestType: command.RequestType,
 				},
 			)
 
@@ -801,12 +811,12 @@ func PushSharedProfiles(
 					return pushedCommands, errors.Wrap(err, "PushSharedProfiles")
 				}
 
-				commandPayload.Payload = base64.StdEncoding.EncodeToString(signed)
+				payload.CommandPayload.Command.Payload = []byte(signed)
 			} else {
-				commandPayload.Payload = base64.StdEncoding.EncodeToString(profileData.MobileconfigData)
+				payload.CommandPayload.Command.Payload = []byte(profileData.MobileconfigData)
 			}
 
-			command, err := SendCommand(commandPayload)
+			payload, err := SendCommand(payload)
 			if err != nil {
 				return pushedCommands, errors.Wrap(err, "PushSharedProfiles")
 			}
@@ -1225,11 +1235,11 @@ func loadSigningKey(
 func RequestProfileList(device types.Device) error {
 	requestType := "ProfileList"
 	log.Debugf("Requesting Profile List for %v", device.UDID)
-	var commandPayload types.CommandPayload
-	commandPayload.UDID = device.UDID
-	commandPayload.RequestType = requestType
+	var payload types.Payload
+	payload.UDID = device.UDID
+	payload.CommandPayload.Command.RequestType = requestType
 
-	_, err := SendCommand(commandPayload)
+	_, err := SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "RequestProfileList: SendCommand")
 	}

@@ -4,11 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	intErrors "errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
 	"time"
 
+	"github.com/go-xmlfmt/xmlfmt"
+	"github.com/google/uuid"
+	"github.com/groob/plist"
 	"github.com/mdmdirector/mdmdirector/db"
 	"github.com/mdmdirector/mdmdirector/types"
 	"github.com/mdmdirector/mdmdirector/utils"
@@ -18,12 +22,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func SendCommand(commandPayload types.CommandPayload) (types.Command, error) {
+func SendCommand(payload types.Payload) (types.Payload, error) {
 	var command types.Command
 	var commandResponse types.CommandResponse
-	device, err := GetDevice(commandPayload.UDID)
+
+	device, err := GetDevice(payload.UDID)
 	if err != nil {
-		return command, err
+		return payload, err
 	}
 
 	InfoLogger(
@@ -31,58 +36,71 @@ func SendCommand(commandPayload types.CommandPayload) (types.Command, error) {
 			Message:            "Sending Command",
 			DeviceUDID:         device.UDID,
 			DeviceSerial:       device.SerialNumber,
-			CommandRequestType: commandPayload.RequestType,
+			CommandRequestType: payload.CommandPayload.Command.RequestType,
 		},
 	)
 
-	jsonStr, err := json.Marshal(commandPayload)
-	if err != nil {
-		return command, err
-	}
-	req, _ := http.NewRequest("POST", utils.ServerURL()+"/v1/commands", bytes.NewBuffer(jsonStr))
+	payload.CommandPayload.CommandUUID = uuid.New().String()
 
-	req.SetBasicAuth("micromdm", utils.APIKey())
+	plistStr, err := plist.Marshal(payload.CommandPayload)
+	if err != nil {
+		return payload, err
+	}
+
+	x := xmlfmt.FormatXML(string(plistStr), "\t", "  ")
+	fmt.Printf("Sent Payload: %+v", string(x))
+
+	req, _ := http.NewRequest("POST", utils.NanoURL()+"/v1/enqueue/"+device.UDID, bytes.NewBuffer(plistStr))
+
+	req.SetBasicAuth("nanomdm", utils.NanoAPIKey())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return command, err
+		return payload, err
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&commandResponse)
 
 	if err != nil {
-		return command, err
+		return payload, err
 	}
 
 	defer resp.Body.Close()
 
-	command.DeviceUDID = commandPayload.UDID
-	command.CommandUUID = commandResponse.Payload.CommandUUID
-	command.RequestType = commandPayload.RequestType
+	command.CommandUUID = payload.CommandPayload.CommandUUID
+	command.DeviceUDID = device.UDID
+	command.RequestType = payload.CommandPayload.Command.RequestType
+	command.Payload = string(payload.CommandPayload.Command.Payload)
 
 	InfoLogger(
 		LogHolder{
 			Message:            "Sent Command",
 			DeviceUDID:         device.UDID,
 			DeviceSerial:       device.SerialNumber,
-			CommandRequestType: commandPayload.RequestType,
+			CommandRequestType: command.RequestType,
 			CommandUUID:        command.CommandUUID,
 		},
 	)
 
+	// fmt.Printf("Putting Command in the DB: %+v\n", command)
+
 	db.DB.Create(&command)
 	if utils.Prometheus() {
-		if commandPayload.RequestType == "InstallProfile" {
+		if command.RequestType == "AccountConfiguration" {
 			ProfilesPushed.Inc()
 		}
 
-		if commandPayload.RequestType == "InstallApplication" {
+		if command.RequestType == "InstallProfile" {
+			ProfilesPushed.Inc()
+		}
+
+		if command.RequestType == "InstallApplication" {
 			InstallApplicationsPushed.Inc()
 		}
 	}
 
-	return command, nil
+	return payload, nil
 }
 
 func UpdateCommand(
@@ -359,7 +377,7 @@ func clearCommandQueue(device types.Device) error {
 		Timeout: time.Second * 1,
 	}
 
-	endpoint, err := url.Parse(utils.ServerURL())
+	endpoint, err := url.Parse(utils.NanoURL())
 	if err != nil {
 		return err
 	}
@@ -367,7 +385,7 @@ func clearCommandQueue(device types.Device) error {
 	endpoint.Path = path.Join(endpoint.Path, "v1", "commands", device.UDID)
 
 	req, _ := http.NewRequest("DELETE", endpoint.String(), bytes.NewBufferString("{}"))
-	req.SetBasicAuth("micromdm", utils.APIKey())
+	req.SetBasicAuth("micromdm", utils.NanoAPIKey())
 	resp, err := client.Do(req)
 	if err != nil {
 		return err

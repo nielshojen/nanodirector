@@ -1,10 +1,11 @@
 package types
 
 type PostPayload struct {
-	Topic            string            `json:"topic"`
-	EventID          string            `json:"event_id"`
-	CheckinEvent     *CheckinEvent     `json:"checkin_event,omitempty"`
-	AcknowledgeEvent *AcknowledgeEvent `json:"acknowledge_event,omitempty"`
+	Topic              string            `json:"topic"`
+	EventID            string            `json:"event_id"`
+	CheckinEvent       *CheckinEvent     `json:"checkin_event,omitempty"`
+	AcknowledgeEvent   *AcknowledgeEvent `json:"acknowledge_event,omitempty"`
+	AccountCreateEvent Account           `json:"account_create_event,omitempty"`
 }
 
 type CheckinEvent struct {

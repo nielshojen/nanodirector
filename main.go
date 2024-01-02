@@ -18,11 +18,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MicroMDMURL is the url for your MicroMDM server
-var MicroMDMURL string
+// NanoMDMURL is the url for your nanoMDM server
+var NanoMDMURL string
 
-// MicroMDMAPIKey is the api key for your MicroMDM server
-var MicroMDMAPIKey string
+// NanoMDMAPIKey is the api key for your nanoMDM server
+var NanoMDMAPIKey string
 
 // Sign is whether profiles should be signed (they really should)
 var Sign bool
@@ -94,6 +94,10 @@ var OnceIn int
 
 var InfoRequestInterval int
 
+var AdminUserUsername string
+
+var AdminUserPassword string
+
 func main() {
 	var port string
 	var debugMode bool
@@ -110,12 +114,12 @@ func main() {
 		env.String("DIRECTOR_PORT", "8000"),
 		"Port number to run mdmdirector on.",
 	)
-	flag.StringVar(&MicroMDMURL, "micromdmurl", env.String("MICRO_URL", ""), "MicroMDM Server URL")
+	flag.StringVar(&NanoMDMURL, "nanomdmurl", env.String("NANO_URL", ""), "nanoMDM Server URL")
 	flag.StringVar(
-		&MicroMDMAPIKey,
-		"micromdmapikey",
-		env.String("MICRO_API_KEY", ""),
-		"MicroMDM Server API Key",
+		&NanoMDMAPIKey,
+		"nanomdmapikey",
+		env.String("NANO_API_KEY", ""),
+		"nanoMDM Server API Key",
 	)
 	flag.BoolVar(
 		&Sign,
@@ -151,7 +155,7 @@ func main() {
 		&DBUsername,
 		"db-username",
 		env.String("DB_USERNAME", ""),
-		"The username associated with the Postgres instance",
+		"The username associated with the MySQL instance",
 	)
 	flag.StringVar(
 		&DBPassword,
@@ -163,19 +167,19 @@ func main() {
 		&DBName,
 		"db-name",
 		env.String("DB_NAME", ""),
-		"The name of the Postgres database to use",
+		"The name of the MySQL database to use",
 	)
 	flag.StringVar(
 		&DBHost,
 		"db-host",
 		env.String("DB_HOST", ""),
-		"The hostname or IP of the Postgres instance",
+		"The hostname or IP of the MySQL instance",
 	)
 	flag.StringVar(
 		&DBPort,
 		"db-port",
-		env.String("DB_PORT", "5432"),
-		"The port of the Postgres instance",
+		env.String("DB_PORT", "3306"),
+		"The port of the MySQL instance",
 	)
 	flag.StringVar(
 		&RedisHost,
@@ -193,7 +197,7 @@ func main() {
 	flag.StringVar(
 		&DBSSLMode,
 		"db-sslmode",
-		"disable",
+		env.String("DB_SSLMODE", "false"),
 		"The SSL Mode to use to connect to Postgres",
 	)
 	flag.IntVar(
@@ -269,6 +273,18 @@ func main() {
 		env.Int("INFO_REQUEST_INTERVAL", 360),
 		"Number of minutes to wait between issuing information commands",
 	)
+	flag.StringVar(
+		&AdminUserUsername,
+		"admin-user-username",
+		env.String("ADMIN_USER_USERNAE", "administrator"),
+		"Default Username of the Created Admin User",
+	)
+	flag.StringVar(
+		&AdminUserPassword,
+		"admin-user-password",
+		env.String("ADMIN_USER_USERNAE", "password"),
+		"Default Password of the Created Admin User",
+	)
 	flag.Parse()
 
 	logLevel, err := log.ParseLevel(LogLevel)
@@ -288,12 +304,12 @@ func main() {
 		})
 	}
 
-	if MicroMDMURL == "" {
-		log.Fatal("MicroMDM Server URL missing. Exiting.")
+	if NanoMDMURL == "" {
+		log.Fatal("nanoMDM Server URL missing. Exiting.")
 	}
 
-	if MicroMDMAPIKey == "" {
-		log.Fatal("MicroMDM API Key missing. Exiting.")
+	if NanoMDMAPIKey == "" {
+		log.Fatal("nanoMDM API Key missing. Exiting.")
 	}
 
 	if BasicAuthPass == "" {
@@ -344,6 +360,7 @@ func main() {
 
 	err = db.DB.AutoMigrate(
 		&types.Device{},
+		&types.Account{},
 		&types.DeviceProfile{},
 		&types.Command{},
 		&types.SharedProfile{},
@@ -386,7 +403,7 @@ func main() {
 		r.Handle("/metrics", promhttp.Handler())
 	}
 
-	go director.FetchDevicesFromMDM()
+	// go director.FetchDevicesFromMDM()
 
 	// Override OnceIn if --debug is passed
 	if debugMode {

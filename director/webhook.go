@@ -46,7 +46,17 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorLogger(LogHolder{Message: err.Error()})
 	}
 
+	fmt.Println(out.Topic)
+
 	var device types.Device
+
+	if out.Topic == "mdm.AccountCreation" {
+		_, err = SetAccount(out.AccountCreateEvent)
+		if err != nil {
+			ErrorLogger(LogHolder{DeviceSerial: device.SerialNumber, DeviceUDID: device.UDID, Message: err.Error()})
+		}
+		return
+	}
 
 	if out.CheckinEvent != nil {
 		err = plist.Unmarshal(out.CheckinEvent.RawPayload, &device)
@@ -74,6 +84,11 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			ErrorLogger(LogHolder{DeviceSerial: device.SerialNumber, DeviceUDID: device.UDID, Message: err.Error()})
 		}
+		_, err = AccountConfiguration(device)
+		if err != nil {
+			ErrorLogger(LogHolder{DeviceSerial: device.SerialNumber, DeviceUDID: device.UDID, Message: err.Error()})
+		}
+
 	} else if out.Topic == "mdm.TokenUpdate" {
 		tokenUpdateDevice, err := SetTokenUpdate(device)
 		if err != nil {
@@ -93,6 +108,7 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
 	oldUDID := device.UDID
 	oldBuild := device.BuildVersion
 	if device.UDID == "" {
@@ -121,7 +137,6 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if out.AcknowledgeEvent != nil {
-
 		var payloadDict map[string]interface{}
 		err = plist.Unmarshal(out.AcknowledgeEvent.RawPayload, &payloadDict)
 		if err != nil {
@@ -233,15 +248,14 @@ func RequestDeviceUpdate(device types.Device) {
 	var deviceModel types.Device
 	var err error
 	// Checking for device lock or wipe
-	if err = db.DB.Model(&deviceModel).Select("ud_id", "erase", "lock", "serial_number").Where("lock = ? AND ud_id = ?", true, device.UDID).Or("erase = ? AND ud_id = ?", true, device.UDID).First(&device).Error; err == nil {
+	if err = db.DB.Model(&deviceModel).Select("`ud_id`, `erase`, `lock`, `serial_number`").Where("(`lock` = ? AND `ud_id` = ?) OR (`erase` = ? AND `ud_id` = ?)", true, device.UDID, true, device.UDID).First(&device).Error; err == nil {
 		err = EraseLockDevice(device.UDID)
 		if err != nil {
 			ErrorLogger(LogHolder{DeviceSerial: device.SerialNumber, DeviceUDID: device.UDID, Message: err.Error()})
 		}
-
 	}
 
-	err = db.DB.Model(&deviceModel).Select("ud_id", "last_info_requested", "lock", "serial_number").Where("ud_id = ?", device.UDID).First(&device).Error
+	err = db.DB.Model(&deviceModel).Select("`ud_id`, `last_info_requested`, `lock`, `serial_number`").Where("ud_id = ?", device.UDID).First(&device).Error
 
 	if err != nil {
 		ErrorLogger(LogHolder{DeviceSerial: device.SerialNumber, DeviceUDID: device.UDID, Message: err.Error()})

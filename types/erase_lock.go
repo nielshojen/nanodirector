@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type EscrowPayload struct {
@@ -14,8 +15,13 @@ type EscrowPayload struct {
 }
 
 type UnlockPin struct {
-	ID         uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID         string `gorm:"primaryKey;type:char(36)"`
 	UnlockPin  string
-	PinSet     time.Time
+	PinSet     time.Time `gorm:"type:DATETIME;default:NULL"`
 	DeviceUDID string
+}
+
+func (unlockpin *UnlockPin) BeforeCreate(scope *gorm.DB) error {
+	unlockpin.ID = uuid.NewString()
+	return nil
 }

@@ -12,9 +12,9 @@ import (
 func RequestSecurityInfo(device types.Device) error {
 	requestType := "SecurityInfo"
 	log.Debugf("Requesting Security Info for %v", device.UDID)
-	var payload types.CommandPayload
+	var payload types.Payload
 	payload.UDID = device.UDID
-	payload.RequestType = requestType
+	payload.CommandPayload.Command.RequestType = requestType
 	_, err := SendCommand(payload)
 	if err != nil {
 		return errors.Wrap(err, "RequestSecurityInfo: SendCommand")

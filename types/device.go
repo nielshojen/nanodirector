@@ -4,6 +4,8 @@ import "time"
 
 type Device struct {
 	DeviceName                       string
+	Username                         string
+	Fullname                         string
 	BuildVersion                     string
 	ModelName                        string
 	Model                            string
@@ -21,6 +23,7 @@ type Device struct {
 	IsDeviceLocatorServiceEnabled    bool
 	IsActivationLockEnabled          bool
 	IsDoNotDisturbInEffect           bool
+	IsMDMLostModeEnabled             bool
 	DeviceID                         string
 	EASDeviceIdentifier              string
 	IsCloudBackupEnabled             bool
@@ -31,7 +34,6 @@ type Device struct {
 	// ActiveManagedUsers               []string
 	AppAnalyticsEnabled bool
 	// AutoSetupAdminAccounts interface
-	IsMDMLostModeEnabled        bool
 	AwaitingConfiguration       bool `gorm:"default:false"`
 	MaximumResidentUsers        int
 	BluetoothMAC                string
@@ -47,7 +49,7 @@ type Device struct {
 	IsRoaming                   bool
 	iTunesStoreAccountHash      string
 	iTunesStoreAccountIsActive  bool
-	LastCloudBackupDate         time.Time
+	LastCloudBackupDate         time.Time `gorm:"type:DATETIME;default:NULL"`
 	//MDMOptions                  string
 	// EthernetMACs []string
 	// OrganizationInfo interface{}
@@ -75,22 +77,22 @@ type Device struct {
 	InstallApplications  []DeviceInstallApplication `gorm:"foreignKey:DeviceUDID" json:",omitempty"`
 	SecurityInfo         SecurityInfo               `gorm:"foreignKey:DeviceUDID" json:",omitempty"`
 	ProfileList          []ProfileList              `gorm:"foreignKey:DeviceUDID" json:",omitempty"`
-	UpdatedAt            time.Time
-	AuthenticateRecieved bool `gorm:"default:false"`
-	TokenUpdateRecieved  bool `gorm:"default:false"`
-	InitialTasksRun      bool `gorm:"default:false"`
-	Erase                bool `gorm:"default:false"`
-	Lock                 bool `gorm:"default:false"`
+	UpdatedAt            time.Time                  `gorm:"type:DATETIME;default:NULL"`
+	AuthenticateRecieved bool                       `gorm:"default:false"`
+	TokenUpdateRecieved  bool                       `gorm:"default:false"`
+	InitialTasksRun      bool                       `gorm:"default:false"`
+	Erase                bool                       `gorm:"default:false"`
+	Lock                 bool                       `gorm:"default:false"`
 	UnlockPin            string
 	TempUnlockPin        UnlockPin `gorm:"foreignKey:DeviceUDID"`
-	LastInfoRequested    time.Time
-	NextPush             time.Time
-	// LastScheduledPush        time.Time
-	LastCheckedIn       time.Time
-	LastCertificateList time.Time
-	LastProfileList     time.Time
-	LastDeviceInfo      time.Time
-	LastSecurityInfo    time.Time
+	LastInfoRequested    time.Time `gorm:"type:DATETIME;default:NULL"`
+	NextPush             time.Time `gorm:"type:DATETIME;default:NULL"`
+	// LastScheduledPush        time.Time  `gorm:"type:DATETIME;default:NULL"`
+	LastCheckedIn       time.Time `gorm:"type:DATETIME;default:NULL"`
+	LastCertificateList time.Time `gorm:"type:DATETIME;default:NULL"`
+	LastProfileList     time.Time `gorm:"type:DATETIME;default:NULL"`
+	LastDeviceInfo      time.Time `gorm:"type:DATETIME;default:NULL"`
+	LastSecurityInfo    time.Time `gorm:"type:DATETIME;default:NULL"`
 }
 
 var DeviceInformationQueries = []string{
@@ -161,7 +163,7 @@ type OSUpdateSettings struct {
 	DeviceUDID                      string `gorm:"primaryKey"`
 	CatalogURL                      string
 	IsDefaultCatalog                bool
-	PreviousScanDate                time.Time
+	PreviousScanDate                time.Time `gorm:"type:DATETIME;default:NULL"`
 	PreviousScanResult              int
 	PerformPeriodicCheck            bool
 	AutomaticCheckEnabled           bool

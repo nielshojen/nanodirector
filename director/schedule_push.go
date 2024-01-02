@@ -108,7 +108,7 @@ func processScheduledCheckin(pushQueue taskq.Queue, task *taskq.Task, onceIn tim
 	}
 
 	var device types.Device
-	err = db.DB.Model(&device).Not("unlock_pin = ?", "").Where("erase = ? AND lock = ?", false, false).Update("unlock_pin", "").Error
+	err = db.DB.Model(&device).Where("`erase` = ? AND `lock` = ? AND `unlock_pin` != ?", false, false, "").Update("unlock_pin", "").Error
 	if err != nil {
 		return errors.Wrap(err, "processScheduledCheckin::ResetFixedPin")
 	}
@@ -253,12 +253,12 @@ func PushDevice(udid string) error {
 	retry := now.Add(time.Minute * time.Duration(int64(utils.OnceIn())))
 	retryUnix := retry.Unix()
 
-	endpoint, err := url.Parse(utils.ServerURL())
+	endpoint, err := url.Parse(utils.NanoURL())
 	if err != nil {
 		return errors.Wrap(err, "PushDevice")
 	}
 
-	endpoint.Path = path.Join(endpoint.Path, "push", device.UDID)
+	endpoint.Path = path.Join(endpoint.Path, "v1/push", device.UDID)
 	queryString := endpoint.Query()
 	queryString.Set("expiration", strconv.FormatInt(retryUnix, 10))
 	endpoint.RawQuery = queryString.Encode()
@@ -266,7 +266,7 @@ func PushDevice(udid string) error {
 	if err != nil {
 		return errors.Wrap(err, "PushDevice")
 	}
-	req.SetBasicAuth("micromdm", utils.APIKey())
+	req.SetBasicAuth("nanomdm", utils.NanoAPIKey())
 
 	resp, err := client.Do(req)
 	if err != nil {

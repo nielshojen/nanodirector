@@ -154,12 +154,13 @@ func PushInstallApplication(devices []types.Device, installApplication types.Dev
 			continue
 		}
 
-		var commandPayload types.CommandPayload
-		commandPayload.UDID = device.UDID
-		commandPayload.RequestType = "InstallApplication"
-		commandPayload.ManifestURL = installApplication.ManifestURL
+		var payload types.Payload
+		var command types.Command
+		payload.UDID = device.UDID
+		payload.CommandPayload.Command.RequestType = "InstallApplication"
+		payload.CommandPayload.Command.ManifestURL = installApplication.ManifestURL
 
-		command, err := SendCommand(commandPayload)
+		payload, err = SendCommand(payload)
 		if err != nil {
 			// We should return an error or something here
 			ErrorLogger(LogHolder{Message: err.Error()})
@@ -200,12 +201,14 @@ func PushSharedInstallApplication(devices []types.Device, installSharedApplicati
 			continue
 		}
 
-		var commandPayload types.CommandPayload
-		commandPayload.UDID = device.UDID
-		commandPayload.RequestType = "InstallApplication"
-		commandPayload.ManifestURL = installSharedApplication.ManifestURL
+		var payload types.Payload
+		var command types.Command
 
-		command, err := SendCommand(commandPayload)
+		payload.UDID = device.UDID
+		payload.CommandPayload.Command.RequestType = "InstallApplication"
+		payload.CommandPayload.Command.ManifestURL = installSharedApplication.ManifestURL
+
+		payload, err := SendCommand(payload)
 		if err != nil {
 			return sentCommands, errors.Wrap(err, "Push Shared Install Application")
 		}

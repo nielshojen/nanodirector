@@ -2,7 +2,6 @@ package director
 
 import (
 	"crypto/x509"
-	"encoding/base64"
 	"os"
 	"time"
 
@@ -58,12 +57,12 @@ func reinstallEnrollmentProfile(device types.Device) error {
 				return err
 			}
 		}
-		var commandPayload types.CommandPayload
-		commandPayload.RequestType = "InstallProfile"
-		commandPayload.Payload = base64.StdEncoding.EncodeToString(data)
-		commandPayload.UDID = device.UDID
+		var payload types.Payload
+		payload.CommandPayload.Command.RequestType = "InstallProfile"
+		payload.CommandPayload.Command.Payload = []byte(data)
+		payload.UDID = device.UDID
 
-		_, err = SendCommand(commandPayload)
+		_, err = SendCommand(payload)
 		if err != nil {
 			return errors.Wrap(err, "Failed to push enrollment profile")
 		}

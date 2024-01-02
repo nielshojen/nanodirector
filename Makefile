@@ -55,6 +55,11 @@ postgres:
 	docker run --name mdmdirector-redis -d -p 6379:6379 redis
 	sleep 5
 
+redis:
+	docker rm -f mdmdirector-redis || true
+	docker run --name mdmdirector-redis -d -p 6379:6379 redis:6
+	sleep 5
+
 mdmdirector_nosign: build
 	build/$(CURRENT_PLATFORM)/mdmdirector -micromdmurl="${SERVER_URL}" -micromdmapikey="supersecret" -debug
 

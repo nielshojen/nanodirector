@@ -1,15 +1,18 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type DeviceInstallApplication struct {
-	ID          uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID          string `gorm:"primaryKey;type:char(36)"`
 	ManifestURL string
 	DeviceUDID  string
 }
 
 type SharedInstallApplication struct {
-	ID          uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID          string `gorm:"primaryKey;type:char(36)"`
 	ManifestURL string
 }
 
@@ -22,4 +25,14 @@ type InstallApplicationPayload struct {
 type ManifestURL struct {
 	URL           string `json:"url"`
 	BootstrapOnly bool   `json:"bootstrap_only"`
+}
+
+func (application *DeviceInstallApplication) BeforeCreate(scope *gorm.DB) error {
+	application.ID = uuid.NewString()
+	return nil
+}
+
+func (application *SharedInstallApplication) BeforeCreate(scope *gorm.DB) error {
+	application.ID = uuid.NewString()
+	return nil
 }

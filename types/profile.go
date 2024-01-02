@@ -8,7 +8,7 @@ import (
 
 // DeviceProfile (s) are profiles that are individual to the device.
 type DeviceProfile struct {
-	// ID                uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	// ID                uuid.UUID `gorm:"primaryKey;type:char(36);default:uuid_generate_v4()"`
 	PayloadUUID       string
 	PayloadIdentifier string `gorm:"primaryKey"`
 	HashedPayloadUUID string
@@ -20,7 +20,7 @@ type DeviceProfile struct {
 
 // SharedProfile (s) are profiles that go on every device.
 type SharedProfile struct {
-	ID                uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID                string `gorm:"primaryKey;type:char(36)"`
 	PayloadUUID       string
 	HashedPayloadUUID string
 	PayloadIdentifier string
@@ -56,7 +56,7 @@ type ProfileListData struct {
 }
 
 type ProfileList struct {
-	ID                       uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID                       string `gorm:"primaryKey;type:char(36)"`
 	DeviceUDID               string
 	HasRemovalPasscode       bool                 `plist:"HasRemovalPasscode"`
 	IsEncrypted              bool                 `plist:"IsEncrypted"`
@@ -92,6 +92,16 @@ type PayloadContentItem struct {
 	PayloadOrganization string `plist:"PayloadOrganization"`
 	PayloadType         string `plist:"PayloadType"`
 	PayloadVersion      int    `plist:"PayloadVersion"`
+}
+
+func (profile *SharedProfile) BeforeCreate(scope *gorm.DB) error {
+	profile.ID = uuid.NewString()
+	return nil
+}
+
+func (profilelist *ProfileList) BeforeCreate(scope *gorm.DB) error {
+	profilelist.ID = uuid.NewString()
+	return nil
 }
 
 func (profile *DeviceProfile) AfterCreate(tx *gorm.DB) (err error) {

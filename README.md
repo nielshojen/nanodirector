@@ -1,8 +1,8 @@
 # nanoDirector
 
-nanoDirector is a rewrite of the amazing [MDMDirector](https://github.com/mamdirector/mdmdirector). I had to do a Proof of Concept for work, and wanted a component that could talk to [NanoMDM](https://github.com/NanoMDM/nanomdm) directly. I also wanted to use MySQL as a backend so we could keep all the nano components on the same DB, and had a need for some AccountCreatino functionality.
+nanoDirector is a rewrite of the amazing [MDMDirector](https://github.com/mamdirector/mdmdirector). I had to do a Proof of Concept for work, and wanted a component that could talk to [NanoMDM](https://github.com/NanoMDM/nanomdm) directly. I also wanted to use MySQL as a backend so we could keep all the nano components on the same DB, and had a need for some AccountCreation functionality.
 
-NOTE that this is my forst time working with go, so this is probably riddled with bad code and poor choices. Use at your peril!
+NOTE that this is my first time working with go, so this is probably riddled with bad code and poor choices. Use at your peril!
 
 ## Usage
 

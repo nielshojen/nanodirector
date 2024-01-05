@@ -50,7 +50,7 @@ func totalDevices() {
 		Namespace: "micromdm",
 		Subsystem: "devices",
 		Name:      "count",
-		Help:      "Total number of devices in MDMDirector",
+		Help:      "Total number of devices in nanoDirector",
 	})
 	// register totalDevices
 	prometheus.MustRegister(totalDevices)
@@ -73,7 +73,7 @@ func profiles() {
 		Namespace: "micromdm",
 		Subsystem: "profiles",
 		Name:      "sharedprofiles",
-		Help:      "Total number of shared profiles in MDMDirector",
+		Help:      "Total number of shared profiles in nanoDirector",
 	})
 	// register totalSharedProfiles
 	prometheus.MustRegister(totalSharedProfiles)
@@ -94,7 +94,7 @@ func profiles() {
 		Namespace: "micromdm",
 		Subsystem: "profiles",
 		Name:      "installedsharedprofilescount",
-		Help:      "Total number of installed shared profiles in MDMDirector",
+		Help:      "Total number of installed shared profiles in nanoDirector",
 	})
 	// register totalInstalledSharedProfiles
 	prometheus.MustRegister(totalInstalledSharedProfiles)
@@ -115,7 +115,7 @@ func profiles() {
 		Namespace: "micromdm",
 		Subsystem: "profiles",
 		Name:      "uninstalledsharedprofilescount",
-		Help:      "Total number of uninstalled shared profiles in MDMDirector",
+		Help:      "Total number of uninstalled shared profiles in nanoDirector",
 	})
 	// register totalUninstalledSharedProfiles
 	prometheus.MustRegister(totalUninstalledSharedProfiles)
@@ -136,7 +136,7 @@ func profiles() {
 		Namespace: "micromdm",
 		Subsystem: "profiles",
 		Name:      "deviceprofilescount",
-		Help:      "Total number of device profiles in MDMDirector",
+		Help:      "Total number of device profiles in nanoDirector",
 	})
 	// register totalDeviceProfiles
 	prometheus.MustRegister(totalDeviceProfiles)
@@ -157,7 +157,7 @@ func profiles() {
 		Namespace: "micromdm",
 		Subsystem: "profiles",
 		Name:      "installeddeviceprofilescount",
-		Help:      "Total number of installed device profiles in MDMDirector",
+		Help:      "Total number of installed device profiles in nanoDirector",
 	})
 	// register totalInstalledDeviceProfiles
 	prometheus.MustRegister(totalInstalledDeviceProfiles)
@@ -178,7 +178,7 @@ func profiles() {
 		Namespace: "micromdm",
 		Subsystem: "profiles",
 		Name:      "uninstalleddeviceprofilescount",
-		Help:      "Total number of uninstalled device profiles in MDMDirector",
+		Help:      "Total number of uninstalled device profiles in nanoDirector",
 	})
 	// register totalUninstalledDeviceProfiles
 	prometheus.MustRegister(totalUninstalledDeviceProfiles)

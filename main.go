@@ -112,7 +112,7 @@ func main() {
 		&port,
 		"port",
 		env.String("DIRECTOR_PORT", "8000"),
-		"Port number to run mdmdirector on.",
+		"Port number to run nanodirector on.",
 	)
 	flag.StringVar(&NanoMDMURL, "nanomdmurl", env.String("NANO_URL", ""), "nanoMDM Server URL")
 	flag.StringVar(
@@ -384,7 +384,7 @@ func main() {
 	}
 
 	director.InfoLogger(
-		director.LogHolder{Message: "mdmdirector is running, hold onto your butts..."},
+		director.LogHolder{Message: "nanodirector is running, hold onto your butts..."},
 	)
 
 	var QueueFactory = redisq.NewFactory()

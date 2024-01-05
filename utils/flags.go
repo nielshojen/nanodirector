@@ -39,7 +39,7 @@ func PushOnNewBuild() bool {
 }
 
 func GetBasicAuthUser() string {
-	return "mdmdirector"
+	return "nanodirector"
 }
 
 func GetBasicAuthPassword() string {

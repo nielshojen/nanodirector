@@ -22,7 +22,7 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 
 func TestBasicAuth(t *testing.T) {
 
-	username := "mdmdirector"
+	username := "nanodirector"
 	password := "testpass"
 	// Set environment variable to password
 	os.Setenv("DIRECTOR_PASSWORD", password)

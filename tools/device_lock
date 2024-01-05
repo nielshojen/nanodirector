@@ -3,7 +3,7 @@
 # Example:
 #          ./tools/device_lock $udid $pincode
 #
-source $MDMDIRECTOR_ENV_PATH
+source $NANODIRECTOR_ENV_PATH
 endpoint="device/command/device_lock"
 jq -n \
   --arg udid "$1" \
@@ -13,4 +13,4 @@ jq -n \
   |.push_now = true
   |.pin = $pincode
   '|\
-  curl -u "mdmdirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-
+  curl -u "nanodirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-

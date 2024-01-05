@@ -29,7 +29,7 @@ type SharedProfile struct {
 	Installed         bool `gorm:"default:true"`
 }
 
-// ProfilePayload - struct to unpack the payload sent to mdmdirector
+// ProfilePayload - struct to unpack the payload sent to nanodirector
 type ProfilePayload struct {
 	SerialNumbers []string `json:"serial_numbers,omitempty"`
 	DeviceUDIDs   []string `json:"udids,omitempty"`

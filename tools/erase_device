@@ -3,7 +3,7 @@
 # Example:
 #          ./tools/erase_device $udid
 #
-source $MDMDIRECTOR_ENV_PATH
+source $NANODIRECTOR_ENV_PATH
 endpoint="device/command/erase_device"
 jq -n \
   --arg udid "$1" \
@@ -11,4 +11,4 @@ jq -n \
   |.value = true
   |.push_now = true
   '|\
-  curl -u "mdmdirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-
+  curl -u "nanodirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-

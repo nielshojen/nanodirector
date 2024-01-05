@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve MDMDirector
+about: Create a report to help us improve nanoDirector
 
 ---
 
@@ -21,9 +21,9 @@ A clear and concise description of what you expected to happen.
 **Server (please complete the following information):**
 
 - Host environment [e.g. Docker, Ubuntu, AmigoOS]
-- All options passed to MDMDirector, with values
-- MDMDirector Version or Commit SHA
-- MicroMDM Version
+- All options passed to nanoDirector, with values
+- nanoDirector Version or Commit SHA
+- nanomdm Version
 
 **Additional context**
 Add any other context about the problem here.

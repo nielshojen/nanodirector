@@ -91,7 +91,7 @@ func escrowPin(device types.Device, pin string) error {
 
 	payload.Serial = device.SerialNumber
 	payload.Pin = pin
-	payload.Username = "mdmdirector"
+	payload.Username = "nanodirector"
 	payload.SecretType = "unlock_pin"
 
 	// log.Debug(payload)

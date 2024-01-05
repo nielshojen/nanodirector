@@ -1,4 +1,4 @@
-module github.com/mdmdirector/mdmdirector
+module github.com/nielshojen/nanodirector
 
 go 1.20
 
@@ -19,6 +19,7 @@ require (
 	github.com/vmihailenco/taskq/v3 v3.2.8
 	golang.org/x/crypto v0.14.0
 	gopkg.in/ajg/form.v1 v1.5.1
+	gorm.io/driver/mysql v1.5.2
 	gorm.io/driver/postgres v1.3.6
 	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55
 )
@@ -60,5 +61,4 @@ require (
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0 // indirect
-	gorm.io/driver/mysql v1.5.2 // indirect
 )

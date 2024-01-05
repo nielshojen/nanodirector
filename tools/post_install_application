@@ -3,7 +3,7 @@
 # Example:
 #          ./tools/post_profile $UDID $manifest_url
 #
-source $MDMDIRECTOR_ENV_PATH
+source $NANODIRECTOR_ENV_PATH
 endpoint="installapplication"
 jq -n \
   --arg udid "$1" \
@@ -12,4 +12,4 @@ jq -n \
   |.manifest_urls[0].url = $manifesturl
   |.manifest_urls[0].bootstrap_only = false
   '|\
-  curl -u "mdmdirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-
+  curl -u "nanodirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-

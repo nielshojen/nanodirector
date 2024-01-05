@@ -1,4 +1,4 @@
-# Samples of Common API requests to get you started using MDMDirector.
+# Samples of Common API requests to get you started using nanoDirector.
 
 Credit to [@groob](https://github.com/groob) for providing the intial guidance in https://github.com/micromdm/micromdm/pull/392
 
@@ -15,16 +15,16 @@ This env file will be sourced by the scripts.
 Contents of `env` file:
 
 ```
-# the value of the -api-key flag that MDMDirector was started with.
+# the value of the -api-key flag that nanoDirector was started with.
 export API_TOKEN=supersecret
-export SERVER_URL=https://mdmdirector.acme.co
+export SERVER_URL=https://nanodirector.acme.co
 ```
 
-In your shell, set the environment variable `MDMDIRECTOR_ENV_PATH` to point to your env file.
+In your shell, set the environment variable `NANODIRECTOR_ENV_PATH` to point to your env file.
 Do this every time you open a new shell to work with the scripts in this folder.
 
 ```
-export MDMDIRECTOR_ENV_PATH="$(pwd)/env"
+export NANODIRECTOR_ENV_PATH="$(pwd)/env"
 ```
 
 For security of the credentials ensure to appropriately lock down the file permissions

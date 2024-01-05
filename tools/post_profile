@@ -3,7 +3,7 @@
 # Example:
 #          ./tools/post_profile $deivce_udid $path_to_profile_on_disk
 #
-source $MDMDIRECTOR_ENV_PATH
+source $NANODIRECTOR_ENV_PATH
 endpoint="profile"
 jq -n \
   --arg udid "$1" \
@@ -13,4 +13,4 @@ jq -n \
   |.metadata = true
   |.push_now = true
   '|\
-  curl -u "mdmdirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-
+  curl -u "nanodirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-

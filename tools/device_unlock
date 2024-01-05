@@ -4,7 +4,7 @@
 # Example:
 #          ./tools/device_unlock $udid
 #
-source $MDMDIRECTOR_ENV_PATH
+source $NANODIRECTOR_ENV_PATH
 endpoint="device/command/device_lock"
 jq -n \
   --arg udid "$1" \
@@ -12,4 +12,4 @@ jq -n \
   |.value = false
   |.push_now = true
   '|\
-  curl -u "mdmdirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-
+  curl -u "nanodirector:$API_TOKEN" -X POST "$SERVER_URL/$endpoint" -d@-

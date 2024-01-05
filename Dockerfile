@@ -16,7 +16,7 @@ FROM alpine:latest
 
 RUN apk --update add ca-certificates
 
-COPY --from=builder /go/src/github.com/nielshojen/nanodirector/build/linux/nanodirector /usr/bin/nanodirector
+COPY --from=builder /go/src/github.com/nielshojen/nanodirector/build/linux/nanodirector-linux-amd64 /usr/bin/nanodirector
 
 EXPOSE 8000
-CMD ["/usr/bin/mdmdirector"]
+CMD ["/usr/bin/nanodirector"]
